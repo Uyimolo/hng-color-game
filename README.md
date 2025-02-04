@@ -20,7 +20,7 @@ Color Quest is a game where players need to match the target color by selecting 
 1. Clone the repository:
 
 ```bash
-git clone [your-repository-url]
+git clone https://github.com/Uyimolo/hng-color-game.git
 ```
 
 2. Install dependencies:
