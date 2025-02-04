@@ -68,4 +68,5 @@ MIT
 
 ---
 
-Created for the HNG12 Stage 1 Frontend Intern Task
+Created for the HNG12 Stage 1 Frontend Intern
+ Task
