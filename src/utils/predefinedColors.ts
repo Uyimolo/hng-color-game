@@ -82,13 +82,3 @@ export const predefinedColors = [
   '#191970',
   '#8B4513',
 ];
-
-// const generateColors = () => {
-//   const shuffledColors = predefinedColors
-//     .sort(() => 0.5 - Math.random())
-//     .slice(0, 6);
-//   const targetColor =
-//     shuffledColors[Math.floor(Math.random() * shuffledColors.length)];
-//   setColors(shuffledColors);
-//   setTargetColor(targetColor);
-// };

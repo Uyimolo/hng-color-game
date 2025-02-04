@@ -69,7 +69,7 @@ function App() {
 
   const handleColorClick = (color: string) => {
     // make sure clicks are triggered only when the game is not in any status state
-    if (gameStatus !== '') return;
+    // if (gameStatus !== '') return;
 
     if (color === targetColor) {
       setGameStatus('success');
@@ -79,9 +79,9 @@ function App() {
       }, 500);
     } else {
       setGameStatus('wrong');
-      setTimeout(() => {
-        setGameStatus('');
-      }, 500);
+      // setTimeout(() => {
+      //   setGameStatus('');
+      // }, 500);
     }
 
     // increment game round
@@ -90,24 +90,58 @@ function App() {
 
   return (
     <div className={gameStatus + ' ' + 'app'}>
-      <div className=''>
+      <div className='header'>
+        <div
+          className='target-color'
+          style={{ backgroundColor: targetColor }}></div>
+        {/* score */}
+        <div className='score-box'>
+          <p className='score-title'>Score</p>
+          <p className='score'>{score}</p>
+        </div>
+      </div>
+
+      {/* game status */}
+      <div className='game-status'>
+        {gameStatus === 'success' && (
+          <p>🎉 Nailed it! You're a color genius! 🎨</p>
+        )}
+        {gameStatus === 'wrong' && <p>❌ Oops! Try again, you got this! 💪</p>}
+      </div>
+
+      <p className='instruction'>
+        Click on the colored button that matches the target color below
+      </p>
+
+      {/* color options */}
+      <div className='color-options'>
+        {colors.map((color, index) => (
+          <button
+            className={'color-option' + ' ' + `color-${index}`}
+            key={index}
+            onClick={() => handleColorClick(color)}
+            disabled={gameStatus === 'success'}
+            style={{ backgroundColor: color }}>
+            <span></span>
+            </button>
+        ))}
+      </div>
+
+      {/* <div className=''>
         <div className=''>
           <h1>Color Quest</h1>
         </div>
 
         <div className='game-container'>
           <div className='first-section'>
-            {/* score */}
             <div className='score'>
               <p>Score: {score}</p>
               <p>{gameStatus}</p>
               <p>Round: {round}</p>
             </div>
-            {/* target color */}
             <div
               className='target-color'
               style={{ backgroundColor: targetColor }}>
-              {/* {targetColor} */}
               <span className='target-color-text'>Target Color</span>
             </div>
           </div>
@@ -117,7 +151,6 @@ function App() {
               Click on the colored button that matches the target color below
             </p>
 
-            {/* color options */}
             <div className='color-options'>
               {colors.map((color, index) => (
                 <button
@@ -126,7 +159,6 @@ function App() {
                   onClick={() => handleColorClick(color)}
                   disabled={gameStatus === 'success' || gameStatus === 'wrong'}
                   style={{ backgroundColor: color }}>
-                  {/* {color} */}
                 </button>
               ))}
             </div>
@@ -138,7 +170,7 @@ function App() {
             )}
           </div>
         </div>
-      </div>
+      </div> */}
     </div>
   );
 }
