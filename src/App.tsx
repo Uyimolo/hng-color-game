@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import './App.css';
+import { predefinedColors } from './utils/predefinedColors';
 
 function App() {
   const [targetColor, setTargetColor] = useState('');
@@ -28,24 +29,41 @@ function App() {
     }
   }, [round]);
 
+  // const generateColors = () => {
+  //   // reset game status
+  //   setGameStatus('');
+
+  //   // Generate an array of 5 random hex colors
+  //   const colors = Array.from(
+  //     { length: 6 },
+  //     () =>
+  //       `#${Math.floor(Math.random() * 16777215)
+  //         .toString(16)
+  //         .padStart(6, '0')}`
+  //   );
+
+  //   // pick a random color from the colors array as the target color
+  //   const targetColor = colors[Math.floor(Math.random() * colors.length)];
+
+  //   // update colors array and target color state
+  //   setColors(colors);
+  //   setTargetColor(targetColor);
+  // };
+
   const generateColors = () => {
     // reset game status
     setGameStatus('');
 
-    // Generate an array of 5 random hex colors
-    const colors = Array.from(
-      { length: 5 },
-      () =>
-        `#${Math.floor(Math.random() * 16777215)
-          .toString(16)
-          .padStart(6, '0')}`
-    );
+    const shuffledColors = predefinedColors
+      .sort(() => 0.5 - Math.random())
+      .slice(0, 6);
 
-    // pick a random color from the colors array as the target color
-    const targetColor = colors[Math.floor(Math.random() * colors.length)];
+    // pick a random color from the shuffled colors array as the target color
+    const targetColor =
+      shuffledColors[Math.floor(Math.random() * shuffledColors.length)];
 
     // update colors array and target color state
-    setColors(colors);
+    setColors(shuffledColors);
     setTargetColor(targetColor);
   };
 
@@ -78,48 +96,47 @@ function App() {
         </div>
 
         <div className='game-container'>
-          {/* score */}
-          <div className='score'>
-            <p>Score: {score}</p>
-            <p>Round: {round}</p>
-          </div>
-          {/* target color */}
-          <div
-            className='target-color'
-            style={{ backgroundColor: targetColor }}>
-            {/* {targetColor} */}
-            <span className={'target-color-text' + ' ' + gameStatus}>
-              {gameStatus === 'success'
-                ? 'Correct'
-                : gameStatus === 'wrong'
-                ? 'Not correct'
-                : 'Target Color'}
-            </span>
+          <div className='first-section'>
+            {/* score */}
+            <div className='score'>
+              <p>Score: {score}</p>
+              <p>{gameStatus}</p>
+              <p>Round: {round}</p>
+            </div>
+            {/* target color */}
+            <div
+              className='target-color'
+              style={{ backgroundColor: targetColor }}>
+              {/* {targetColor} */}
+              <span className='target-color-text'>Target Color</span>
+            </div>
           </div>
 
-          <p className='instruction'>
-            Click on the colored button that matches the target color below
-          </p>
+          <div className='second-section'>
+            <p className='instruction'>
+              Click on the colored button that matches the target color below
+            </p>
 
-          {/* color options */}
-          <div className='color-options'>
-            {colors.map((color, index) => (
-              <button
-                className='color-option'
-                key={index}
-                onClick={() => handleColorClick(color)}
-                disabled={gameStatus === 'success' || gameStatus === 'wrong'}
-                style={{ backgroundColor: color }}>
-                {/* {color} */}
+            {/* color options */}
+            <div className='color-options'>
+              {colors.map((color, index) => (
+                <button
+                  className='color-option'
+                  key={index}
+                  onClick={() => handleColorClick(color)}
+                  disabled={gameStatus === 'success' || gameStatus === 'wrong'}
+                  style={{ backgroundColor: color }}>
+                  {/* {color} */}
+                </button>
+              ))}
+            </div>
+
+            {round !== 1 && (
+              <button className='new-game-btn' onClick={newGame}>
+                Restart Game
               </button>
-            ))}
+            )}
           </div>
-
-          {round !== 1 && (
-            <button className='new-game-btn' onClick={newGame}>
-              Restart Game
-            </button>
-          )}
         </div>
       </div>
     </div>
