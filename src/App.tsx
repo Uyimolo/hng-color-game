@@ -4,173 +4,127 @@ import { useEffect, useState } from 'react';
 import './App.css';
 import { predefinedColors } from './utils/predefinedColors';
 
+import pentagon from './assets/bg-pentagon.svg';
+type predefinedColor = {
+  color: string;
+  darkerShade: string;
+};
+
 function App() {
   const [targetColor, setTargetColor] = useState('');
-  const [colors, setColors] = useState<string[]>([]);
+  const [colors, setColors] = useState<predefinedColor[]>();
   const [gameStatus, setGameStatus] = useState<'success' | 'wrong' | ''>('');
   const [score, setScore] = useState(0);
-  const [round, setRound] = useState(1);
+  const [canClick, setCanClick] = useState(false);
 
   const newGame = () => {
-    setRound(1);
     setScore(0);
-    generateColors();
+
+    setTimeout(generateColors, 10);
   };
 
   useEffect(() => {
     newGame();
   }, []);
 
-  // check if the game is over (when round is greater than 10)
-  useEffect(() => {
-    if (round > 10) {
-      alert(`Game Over! Your final score is ${score}`);
-      newGame();
-    }
-  }, [round]);
-
-  // const generateColors = () => {
-  //   // reset game status
-  //   setGameStatus('');
-
-  //   // Generate an array of 5 random hex colors
-  //   const colors = Array.from(
-  //     { length: 6 },
-  //     () =>
-  //       `#${Math.floor(Math.random() * 16777215)
-  //         .toString(16)
-  //         .padStart(6, '0')}`
-  //   );
-
-  //   // pick a random color from the colors array as the target color
-  //   const targetColor = colors[Math.floor(Math.random() * colors.length)];
-
-  //   // update colors array and target color state
-  //   setColors(colors);
-  //   setTargetColor(targetColor);
-  // };
-
   const generateColors = () => {
     // reset game status
     setGameStatus('');
 
-    const shuffledColors = predefinedColors
+    const shuffledColors = [...predefinedColors]
       .sort(() => 0.5 - Math.random())
       .slice(0, 6);
 
     // pick a random color from the shuffled colors array as the target color
     const targetColor =
-      shuffledColors[Math.floor(Math.random() * shuffledColors.length)];
+      shuffledColors[Math.floor(Math.random() * shuffledColors.length)].color;
 
-    // update colors array and target color state
     setColors(shuffledColors);
     setTargetColor(targetColor);
+
+    // enable clicks
+    setCanClick(true);
   };
 
   const handleColorClick = (color: string) => {
     // make sure clicks are triggered only when the game is not in any status state
-    // if (gameStatus !== '') return;
+    if (!canClick) return;
 
     if (color === targetColor) {
+      // disable clicks to avoid score been incremented multiple times
+      setCanClick(false);
       setGameStatus('success');
-      setScore(score + 1);
-      setTimeout(() => {
-        generateColors();
-      }, 500);
+      setScore((prev) => prev + 1);
+      setTimeout(generateColors, 1000);
     } else {
       setGameStatus('wrong');
-      // setTimeout(() => {
-      //   setGameStatus('');
-      // }, 500);
+      setTimeout(() => setGameStatus(''), 1000);
     }
-
-    // increment game round
-    setRound(round + 1);
   };
 
   return (
-    <div className={gameStatus + ' ' + 'app'}>
+    <div className={`${gameStatus} app`}>
+      <h1>Color Quest</h1>
+
       <div className='header'>
+        <h1>Color Quest</h1>
         <div
           className='target-color'
-          style={{ backgroundColor: targetColor }}></div>
-        {/* score */}
+          data-testid='colorBox'
+          style={{ backgroundColor: targetColor }}>
+          <p>Target Color</p>
+        </div>
+
         <div className='score-box'>
           <p className='score-title'>Score</p>
-          <p className='score'>{score}</p>
+          <p className='score' data-testid='score'>
+            {score}
+          </p>
         </div>
       </div>
 
-      {/* game status */}
       <div className='game-status'>
-        {gameStatus === 'success' && (
-          <p>🎉 Nailed it! You're a color genius! 🎨</p>
-        )}
-        {gameStatus === 'wrong' && <p>❌ Oops! Try again, you got this! 💪</p>}
+        <p data-testid='gameStatus'>
+          {gameStatus === 'success'
+            ? "🎉 Nailed it! You're a color genius! 🎨"
+            : gameStatus === 'wrong'
+            ? '❌ Oops! Try again, you got this! 💪'
+            : ''}
+        </p>
       </div>
 
-      <p className='instruction'>
-        Click on the colored button that matches the target color below
+      <p className='instruction' data-testid='gameInstructions'>
+        Click on the colored button that matches the target color{' '}
+        <span>below</span>
       </p>
 
-      {/* color options */}
       <div className='color-options'>
-        {colors.map((color, index) => (
+        <img src={pentagon} alt='pentagon image' className='pentagon' />
+        {colors?.map((colorObj, index) => (
           <button
-            className={'color-option' + ' ' + `color-${index}`}
+            className={`color-option color-${index}`}
             key={index}
-            onClick={() => handleColorClick(color)}
+            onClick={() => handleColorClick(colorObj.color)}
             disabled={gameStatus === 'success'}
-            style={{ backgroundColor: color }}>
-            <span></span>
-            </button>
+            data-testid='colorOption'
+            style={{
+              backgroundColor: colorObj.color,
+              boxShadow: `3px 6px 1px ${colorObj.darkerShade}`,
+              border: `1px solid ${colorObj.darkerShade}`,
+            }}>
+            <span className='hollow-inner'></span>
+          </button>
         ))}
       </div>
 
-      {/* <div className=''>
-        <div className=''>
-          <h1>Color Quest</h1>
-        </div>
-
-        <div className='game-container'>
-          <div className='first-section'>
-            <div className='score'>
-              <p>Score: {score}</p>
-              <p>{gameStatus}</p>
-              <p>Round: {round}</p>
-            </div>
-            <div
-              className='target-color'
-              style={{ backgroundColor: targetColor }}>
-              <span className='target-color-text'>Target Color</span>
-            </div>
-          </div>
-
-          <div className='second-section'>
-            <p className='instruction'>
-              Click on the colored button that matches the target color below
-            </p>
-
-            <div className='color-options'>
-              {colors.map((color, index) => (
-                <button
-                  className='color-option'
-                  key={index}
-                  onClick={() => handleColorClick(color)}
-                  disabled={gameStatus === 'success' || gameStatus === 'wrong'}
-                  style={{ backgroundColor: color }}>
-                </button>
-              ))}
-            </div>
-
-            {round !== 1 && (
-              <button className='new-game-btn' onClick={newGame}>
-                Restart Game
-              </button>
-            )}
-          </div>
-        </div>
-      </div> */}
+      {
+        <button
+          className='new-game'
+          onClick={newGame}
+          data-testid='newGameButton'>
+          New Game
+        </button>
+      }
     </div>
   );
 }
